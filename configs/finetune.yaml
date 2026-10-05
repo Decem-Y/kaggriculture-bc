@@ -1,0 +1,69 @@
+# Stage 2: continue on the most recent day only. Same census and vocabulary as stage 1.
+seed: 0
+census: data/pretrain/census.jsonl
+ep_dir: cache/ep
+lab_dir: cache/lab
+since: '2026-09-27'
+init: runs/pretrain/step30000.pt
+teacher: null
+model:
+  d: 256
+  layers: 8
+  heads: 8
+  ff: 1024
+  drop: 0.0
+  ckpt: false
+  cap: 30.0
+  ndate: 42          # date buckets 0..41 = 2026-08-17 .. 2026-09-27 (later days are clamped to the last bucket)
+  dec_layers: 2
+  dec_ff: 512
+  rope_theta: 100.0
+  attn: explicit
+loss_w:
+  op: 1.0
+  tile: 1.0
+  item: 0.5
+  raw: 1.0
+  qty: 0.5
+  sell: 1.0
+  seed: 1.0
+  buyp: 1.0
+  anim: 1.0
+  hire: 1.0
+  land: 1.0
+optim: muon
+skip_gnspike: true
+batch_size: 512
+workers: 8
+pool: 48
+lr: 0.0001
+wd: 0.05
+muon:
+  lr: 0.00075
+  momentum: 0.95
+  wd: 0.0
+  ns_steps: 5
+  split_qkv: true
+  ns_coefs: polar_express
+  ns_dtype: fp16
+  ns_compile: true
+  ns_batch: true
+clip: 1.0
+warmup: 200
+steps: 4000
+compile: true
+ema: 0.999
+log_every: 200
+ckpt_every: 1000
+eval_every: 500
+val_eps: 96
+val_per_ep: 192
+smoke:
+  steps: 60
+  log_every: 10
+  eval_every: 30
+  workers: 4
+  pool: 8
+  val_eps: 8
+  val_per_ep: 64
+  batch_size: 256
