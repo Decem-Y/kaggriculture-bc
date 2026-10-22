@@ -1,6 +1,6 @@
 # Kaggriculture：基于实体 Transformer 的行为克隆
 
-队伍 **DECEM** · 最终榜第 7 名 · [方案帖](https://www.kaggle.com/competitions/kaggriculture/discussion/745367) · [终版模型](https://www.kaggle.com/datasets/zy1343930734/kaggriculture-decem-final-agents) · [Kaggle 主页](https://www.kaggle.com/zy1343930734) · [English](README.md)
+队伍 **DECEM** · 最终榜第 7 名 · [方案帖](https://www.kaggle.com/competitions/kaggriculture/writeups/7th-place-my-solution-only-behavior-cloning-t) · [终版模型](https://www.kaggle.com/datasets/zy1343930734/kaggriculture-decem-final-agents) · [Kaggle 主页](https://www.kaggle.com/zy1343930734) · [English](README.md)
 
 这是 [Kaggriculture](https://www.kaggle.com/competitions/kaggriculture) agent 的训练与评测代码。策略是一个 820 万参数的实体 Transformer，用强队 agent 的回放做行为克隆，条件是队伍、日期桶和这局的胜负。对局时它模仿最强那支队伍的最新版本，只依赖 numpy（在 Kaggle 的 CPU 上每回合约 0.1 秒），另外加了两条小规则，防止引擎把货物销毁。我们最后两个提交的权重放在 Kaggle 上，见[终版模型](#终版模型)。
 

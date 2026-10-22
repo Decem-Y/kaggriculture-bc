@@ -1,6 +1,6 @@
 # Kaggriculture: behaviour cloning with an entity Transformer
 
-Team **DECEM** · 7th on the final leaderboard · [Write-up](https://www.kaggle.com/competitions/kaggriculture/discussion/745367) · [Final agents](https://www.kaggle.com/datasets/zy1343930734/kaggriculture-decem-final-agents) · [Kaggle profile](https://www.kaggle.com/zy1343930734) · [中文](README_zh.md)
+Team **DECEM** · 7th on the final leaderboard · [Write-up](https://www.kaggle.com/competitions/kaggriculture/writeups/7th-place-my-solution-only-behavior-cloning-t) · [Final agents](https://www.kaggle.com/datasets/zy1343930734/kaggriculture-decem-final-agents) · [Kaggle profile](https://www.kaggle.com/zy1343930734) · [中文](README_zh.md)
 
 Training and evaluation code for a [Kaggriculture](https://www.kaggle.com/competitions/kaggriculture) agent. The policy is an 8.2M-parameter entity Transformer trained by behaviour cloning on replays of strong agents, conditioned on team, date bucket and game outcome. At play time it imitates the strongest team's latest version, runs on numpy only (about 0.1 s per turn on Kaggle's CPU) and adds two small rules that stop the engine from destroying goods. The weights of our two final submissions are on Kaggle, see [Final agents](#final-agents).
 
