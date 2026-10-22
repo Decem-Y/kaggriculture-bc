@@ -1,8 +1,8 @@
 # Kaggriculture：基于实体 Transformer 的行为克隆
 
-队伍 **DECEM** · [Kaggle 主页](https://www.kaggle.com/zy1343930734) · [English](README.md)
+队伍 **DECEM** · 最终榜第 7 名 · [方案帖](https://www.kaggle.com/competitions/kaggriculture/discussion/745367) · [终版模型](https://www.kaggle.com/datasets/zy1343930734/kaggriculture-decem-final-agents) · [Kaggle 主页](https://www.kaggle.com/zy1343930734) · [English](README.md)
 
-这是 [Kaggriculture](https://www.kaggle.com/competitions/kaggriculture) agent 的训练与评测代码。策略是一个 820 万参数的实体 Transformer，用强队 agent 的回放做行为克隆，条件是队伍、日期桶和这局的胜负。对局时它模仿最强那支队伍的最新版本，只依赖 numpy（在 Kaggle 的 CPU 上每回合约 0.1 秒），另外加了两条小规则，防止引擎把货物销毁。
+这是 [Kaggriculture](https://www.kaggle.com/competitions/kaggriculture) agent 的训练与评测代码。策略是一个 820 万参数的实体 Transformer，用强队 agent 的回放做行为克隆，条件是队伍、日期桶和这局的胜负。对局时它模仿最强那支队伍的最新版本，只依赖 numpy（在 Kaggle 的 CPU 上每回合约 0.1 秒），另外加了两条小规则，防止引擎把货物销毁。我们最后两个提交的权重放在 Kaggle 上，见[终版模型](#终版模型)。
 
 ![策略网络](assets/architecture_zh.png)
 
@@ -11,6 +11,27 @@
 1. **预训练**：用大约最近两周对局里所有可训练的座位，按 3 天半衰期做近期加权抽样。
 2. **微调**：只用最近一天的数据。
 3. **专精**：只用一支队伍的座位，数据来自它最新几个版本的对局，按验证损失早停。
+
+## 终版模型
+
+比赛结束时在场的两个 agent 放在 Kaggle 数据集 [kaggriculture-decem-final-agents](https://www.kaggle.com/datasets/zy1343930734/kaggriculture-decem-final-agents)（CC BY 4.0）：
+
+| 目录 | 提交时间（UTC） | 专精数据 |
+|---|---|---|
+| `sub-2026-09-30-1908` | 2026-09-30 19:08 | 目标队伍最新 6 个版本，645 局；最终成绩来自这一个 |
+| `sub-2026-09-30-1046` | 2026-09-30 10:46 | 最新 5 个版本，573 局 |
+
+两个都从同一个预训练加微调的检查点出发，专精配置也相同，只有数据不同。每个目录里是一个能直接用的 agent（`main.py`、`weights.npz`、`vocab.json`，用 `scripts/package.py` 打成提交包）和 `checkpoint.pt`，后者可以交给 `scripts/build_agent.py`，也可以填在配置的 `init` 里接着训。
+
+`weights.npz` 和 `vocab.json` 与当时提交的文件逐字节相同。`main.py` 是用 `scripts/build_agent.py` 从 `checkpoint.pt` 重新生成的（`--date 41 --topk 8`，队伍取公开的 `main.py` 里设的那个），在官方引擎上和提交版每一步的动作都一样。
+
+```python
+from kaggle_environments import make
+
+env = make("kaggriculture", configuration={"seed": 42})
+env.run(["sub-2026-09-30-1908/main.py", "random"])   # main.py 会在自己旁边找 weights.npz
+print([s.reward for s in env.steps[-1]])
+```
 
 ## 目录结构
 
@@ -130,4 +151,4 @@ python tools/world_report.py results/d8/old.jsonl results/d8/new.jsonl
 
 ## 许可证
 
-MIT，见 [LICENSE](LICENSE)。`src/muon.py` 和 `src/newton_schulz.py` 改写自上面致谢中列出的 MIT 许可项目。
+CC BY 4.0，见 [LICENSE](LICENSE)，代码和公开的模型权重都适用；比赛规则要求获奖队伍把获奖提交和生成它的代码按 CC BY 4.0 授权。`src/muon.py` 和 `src/newton_schulz.py` 改写自上面致谢中列出的 MIT 许可项目，原许可声明保留在 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)。

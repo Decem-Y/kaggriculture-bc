@@ -1,8 +1,8 @@
 # Kaggriculture: behaviour cloning with an entity Transformer
 
-Team **DECEM** · [Kaggle profile](https://www.kaggle.com/zy1343930734) · [中文](README_zh.md)
+Team **DECEM** · 7th on the final leaderboard · [Write-up](https://www.kaggle.com/competitions/kaggriculture/discussion/745367) · [Final agents](https://www.kaggle.com/datasets/zy1343930734/kaggriculture-decem-final-agents) · [Kaggle profile](https://www.kaggle.com/zy1343930734) · [中文](README_zh.md)
 
-Training and evaluation code for a [Kaggriculture](https://www.kaggle.com/competitions/kaggriculture) agent. The policy is an 8.2M-parameter entity Transformer trained by behaviour cloning on replays of strong agents, conditioned on team, date bucket and game outcome. At play time it imitates the strongest team's latest version, runs on numpy only (about 0.1 s per turn on Kaggle's CPU) and adds two small rules that stop the engine from destroying goods.
+Training and evaluation code for a [Kaggriculture](https://www.kaggle.com/competitions/kaggriculture) agent. The policy is an 8.2M-parameter entity Transformer trained by behaviour cloning on replays of strong agents, conditioned on team, date bucket and game outcome. At play time it imitates the strongest team's latest version, runs on numpy only (about 0.1 s per turn on Kaggle's CPU) and adds two small rules that stop the engine from destroying goods. The weights of our two final submissions are on Kaggle, see [Final agents](#final-agents).
 
 ![Policy network](assets/architecture.png)
 
@@ -11,6 +11,27 @@ Training has three stages:
 1. **Pretrain** on every trainable seat of roughly the last two weeks of games, sampled with a 3-day recency half-life.
 2. **Fine-tune** on the most recent day.
 3. **Specialise** on one team's seats only, from the games of its latest few versions, early-stopped on validation loss.
+
+## Final agents
+
+The two agents we had in play at the end of the competition are in the Kaggle dataset [kaggriculture-decem-final-agents](https://www.kaggle.com/datasets/zy1343930734/kaggriculture-decem-final-agents) (CC BY 4.0):
+
+| folder | submitted (UTC) | specialisation data |
+|---|---|---|
+| `sub-2026-09-30-1908` | 2026-09-30 19:08 | the target team's latest six versions, 645 games; the final score comes from this one |
+| `sub-2026-09-30-1046` | 2026-09-30 10:46 | its latest five versions, 573 games |
+
+Both start from the same pretrained and fine-tuned checkpoint with the same specialisation config; only the data differs. Each folder holds a ready agent (`main.py`, `weights.npz`, `vocab.json`; `scripts/package.py` turns the folder into a submission) and `checkpoint.pt`, which works with `scripts/build_agent.py` and as `init` in a config.
+
+`weights.npz` and `vocab.json` are byte-identical to the submitted files. `main.py` was regenerated from `checkpoint.pt` with `scripts/build_agent.py` (`--date 41 --topk 8`, team as set in the released `main.py`) and plays the same actions as the submitted one on the official engine.
+
+```python
+from kaggle_environments import make
+
+env = make("kaggriculture", configuration={"seed": 42})
+env.run(["sub-2026-09-30-1908/main.py", "random"])   # main.py finds weights.npz next to itself
+print([s.reward for s in env.steps[-1]])
+```
 
 ## Layout
 
@@ -130,4 +151,4 @@ python tools/world_report.py results/d8/old.jsonl results/d8/new.jsonl
 
 ## License
 
-MIT, see [LICENSE](LICENSE). `src/muon.py` and `src/newton_schulz.py` are adapted from MIT-licensed projects credited above.
+CC BY 4.0, see [LICENSE](LICENSE). It covers the code and the released model weights; the competition rules ask prize winners to license the winning submission and the code that produced it under CC BY 4.0. `src/muon.py` and `src/newton_schulz.py` are adapted from MIT-licensed projects credited above, and their original notices are kept in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
